@@ -1,9 +1,7 @@
 export default function() {
  this.namespace = '/api';
 
- this.get('/rentals', function() {
-   return {
-     data: [{
+ let rentals = [{
        type: 'rentals',
        id: 'grand-old-mansion',
        attributes: {
@@ -36,9 +34,19 @@ export default function() {
          bedrooms: 3,
          image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg'
        }
-     }]
-   };
- });
+      }];
+
+      this.get('/rentals', function(db, request) {
+        if(request.queryParams.city !== undefined) {
+          let filteredRentals = rentals.filter(function(i) {
+            return i.attributes.city.toLowerCase().indexOf(request.queryParams.city.toLowerCase()) !== -1;
+          });
+          return { data: filteredRentals };
+        } else {
+          return { data: rentals };
+        }
+      });
+
 
   // These comments are here to help you get started. Feel free to delete them.
 
@@ -62,5 +70,5 @@ export default function() {
     this.del('/posts/:id');
 
     http://www.ember-cli-mirage.com/docs/v0.3.x/shorthands/
-  */
+  */ 
 }
